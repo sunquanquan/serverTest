@@ -19,7 +19,7 @@ export interface IORM {
     delete(condition: IField | string, cb: any): void;
 }
 // ORM framework
-export default class ORM extends MysqlClass implements IORM {
+export class ORM implements IORM {
     public createTableFieldMap!: IField;
     public fieldMap!: IField;
     public map!: IField;
@@ -28,19 +28,19 @@ export default class ORM extends MysqlClass implements IORM {
 
     public delete(condition: IField | string, callback: any) {
         const dbCondition: IField | string = typeof condition === "string" ? condition : this.getFieldObject(condition);
-        this.deleteRow(this.table, dbCondition, (err: any, results: any, fields: any) => {
+        MysqlClass.getInstance().deleteRow(this.table, dbCondition, (err: any, results: any, fields: any) => {
             callback(err, results, fields);
         });
     }
     public fetch(query: IField | string, callback: any) {
         const dbQuery: IField | string = typeof query === "string" ? query : this.getFieldObject(query);
-        this.tableQuery(this.table, dbQuery, (err: any, results: any, fields: any) => {
+        MysqlClass.getInstance().tableQuery(this.table, dbQuery, (err: any, results: any, fields: any) => {
             callback(err, results, fields);
         });
     }
 
     public fetchAll(callback: any, condition?: IField | string) {
-        this.sqlQuery({
+        MysqlClass.getInstance().sqlQuery({
             sql: !condition ? format("select * from ??", [this.table]) :
                 typeof condition === "string" ?
                     format("select * from ?? where ??", [this.table, condition]) :
@@ -57,7 +57,7 @@ export default class ORM extends MysqlClass implements IORM {
             sqlStr += this.createTableFieldMap[key];
         }
         const createTableSql: string = `CREATE TABLE ${this.table} (${sqlStr}) ENGINE=InnoDB DEFAULT CHARSET=utf8`;
-        this.sqlQuery({
+        MysqlClass.getInstance().sqlQuery({
             sql: createTableSql,
             timeout: 2000
         }, (err: Error, result: any, field: any) => {
@@ -67,14 +67,14 @@ export default class ORM extends MysqlClass implements IORM {
 
     public insert(data: IField, callback: any) {
         const dbData: IField = this.getFieldObject(data);
-        this.insertTable(this.table, dbData, (err: any, results: any, fields: any) => {
+        MysqlClass.getInstance().insertTable(this.table, dbData, (err: any, results: any, fields: any) => {
             callback(err, results, fields);
         });
     }
     public update(data: IField, condition: IField | string, callback: any) {
         const dbData: IField = this.getFieldObject(data);
         const dbCondition: IField | string = typeof condition === "string" ? condition : this.getFieldObject(condition);
-        this.updateTable(this.table, dbData, dbCondition, (err: any, results: any, fields: any) => {
+        MysqlClass.getInstance().updateTable(this.table, dbData, dbCondition, (err: any, results: any, fields: any) => {
             callback(err, results, fields);
         });
     }

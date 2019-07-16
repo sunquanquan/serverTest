@@ -1,5 +1,5 @@
 import { IError, IField } from "./orm";
-import { QueryOptions, createPool, escape, format } from "mysql";
+import { QueryOptions, createPool, escape, format, PoolConnection, MysqlError, Pool } from "mysql";
 
 export interface ISqlResults {
     results: Array<IField>;
@@ -24,25 +24,21 @@ export class MysqlClass {
         return this._mysql;
     }
 
-    private timeout: number = 4000;
+    protected timeout: number = 4000;
+    protected pool!: Pool;
 
     public initDB() {
-
-    }
-
-    public sqlQuery(sql: QueryOptions, callback: any) {
-        let resErr = <IError>{
-            err: false
-        };
-        const pool = createPool({
+        this.pool = createPool({
             host: "localhost",
             user: "root",
             password: "123456",
             port: 3306,
             database: "test",
         });
+    }
 
-        pool.getConnection((err: any, conn: any) => {
+    public sqlQuery(sql: QueryOptions, callback: any) {
+        this.pool.getConnection((err: MysqlError, conn: PoolConnection) => {
             if (err) {
                 callback(err, null, null);
             } else {
