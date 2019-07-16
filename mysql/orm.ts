@@ -1,4 +1,4 @@
-import { MysqlClass, ISqlRes } from "./mysql";
+import { MysqlClass } from "./mysql";
 import { format } from "mysql";
 export interface IField {
     [name: string]: string | number;
@@ -12,11 +12,11 @@ export interface IORM {
     map: IField;
     table: string;
     defaultValue: IField;
-    fetchAll(condition: IField | string): Promise<Array<IField> | IError>;
-    fetch(query: IField | string): Promise<IField | IError>;
-    insert(data: IField): Promise<IError>;
-    update(data: IField, condition: IField | string): Promise<IError>;
-    delete(condition: IField | string): Promise<IError>;
+    fetchAll(condition: IField | string, cb: any): void;
+    fetch(query: IField | string, cb: any): void;
+    insert(data: IField, cb: any): void;
+    update(data: IField, condition: IField | string, cb: any): void;
+    delete(condition: IField | string, cb: any): void;
 }
 // ORM framework
 export default class ORM extends MysqlClass implements IORM {
@@ -32,15 +32,15 @@ export default class ORM extends MysqlClass implements IORM {
             callback(err, results, fields);
         });
     }
-    public fetch(query: IField | string) {
+    public fetch(query: IField | string, callback: any) {
         const dbQuery: IField | string = typeof query === "string" ? query : this.getFieldObject(query);
         this.tableQuery(this.table, dbQuery, (err: any, results: any, fields: any) => {
             callback(err, results, fields);
         });
     }
 
-    public fetchAll(condition?: IField | string, callback: any) {
-        const res: ISqlRes = this.sqlQuery({
+    public fetchAll(callback: any, condition?: IField | string) {
+        this.sqlQuery({
             sql: !condition ? format("select * from ??", [this.table]) :
                 typeof condition === "string" ?
                     format("select * from ?? where ??", [this.table, condition]) :
@@ -51,26 +51,19 @@ export default class ORM extends MysqlClass implements IORM {
         });
     }
 
-    public create() {
+    public create(callback: any) {
         let sqlStr: string = "";
-        for(let key in this.createTableFieldMap) {
+        for (let key in this.createTableFieldMap) {
             sqlStr += this.createTableFieldMap[key];
         }
         const createTableSql: string = `CREATE TABLE ${this.table} (${sqlStr}) ENGINE=InnoDB DEFAULT CHARSET=utf8`;
         this.createTable(createTableSql, (err: Error, result: any, field: any) => {
-            if(err) {
-                console.log(err.message);
-            }
-            console.log(result);
-            console.log(field);
+            callback(err, result, field);
         });
     }
 
     public insert(data: IField, callback: any) {
         const dbData: IField = this.getFieldObject(data);
-        console.log("mysql...........");
-        console.log(dbData);
-        console.log(this.table);
         this.insertTable(this.table, dbData, (err: any, results: any, fields: any) => {
             callback(err, results, fields);
         });

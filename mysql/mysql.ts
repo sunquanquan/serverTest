@@ -1,5 +1,5 @@
-import * as MySql from "mysql";
 import { IError, IField } from "./orm";
+import { QueryOptions, createPool, escape, format } from "mysql";
 
 export interface ISqlResults {
     results: Array<IField>;
@@ -30,9 +30,9 @@ export class MysqlClass {
 
     }
 
-    public sqlQuery1(sql: MySql.QueryOptions, callback?: any) {
+    public sqlQuery1(sql: QueryOptions, callback?: any) {
         // 使用连接池
-        const mysqlPool = MySql.createPool({
+        const mysqlPool = createPool({
             host: "localhost",
             user: "root",
             password: "123456",
@@ -41,25 +41,25 @@ export class MysqlClass {
             connectionLimit: 10000
         });
 
-        mysqlPool.getConnection(function (err, conn) {
+        mysqlPool.getConnection((err: any, conn: any) => {
             if (err) {
                 callback(err, null, null);
             } else {
-                conn.query(sql, function (qerr, vals, fields) {
+                conn.query(sql, (err: any, vals: any, fields: any) => {
                     //释放连接
                     conn.release();
                     //事件驱动回调
-                    callback(qerr, vals, fields);
+                    callback(err, vals, fields);
                 });
             }
         });
     }
 
-    public sqlQuery(sql: MySql.QueryOptions, callback: any) {
+    public sqlQuery(sql: QueryOptions, callback: any) {
         let resErr = <IError>{
             err: false
         };
-        const pool = MySql.createPool({
+        const pool = createPool({
             host: "localhost",
             user: "root",
             password: "123456",
@@ -67,15 +67,15 @@ export class MysqlClass {
             database: "test",
         });
 
-        pool.getConnection(function (err, conn) {
+        pool.getConnection((err: any, conn: any) => {
             if (err) {
                 callback(err, null, null);
             } else {
-                conn.query(sql, function (qerr, vals, fields) {
+                conn.query(sql, (err: any, vals: any, fields: any) => {
                     //释放连接
                     conn.release();
                     //事件驱动回调
-                    callback(qerr, vals, fields);
+                    callback(err, vals, fields);
                 });
             }
         });
@@ -86,7 +86,7 @@ export class MysqlClass {
     public and(dataObject: IQueryObject): string {
         let queryString = "";
         Object.keys(dataObject).forEach(key => {
-            queryString += MySql.escape(key) + "=" + dataObject[key] + " and "
+            queryString += escape(key) + "=" + dataObject[key] + " and "
         });
         return queryString.replace(/\sand\s$/, "");
     }
@@ -94,8 +94,8 @@ export class MysqlClass {
     public tableQuery(table: string, condition: IQueryObject | string, callback: any) {
         this.sqlQuery({
             sql: typeof condition === "string" ?
-                MySql.format("select * from ?? where ??", [table, condition]) :
-                MySql.format("select * from ?? where ?", [table, condition]),
+                format("select * from ?? where ??", [table, condition]) :
+                format("select * from ?? where ?", [table, condition]),
             timeout: this.timeout
         }, (err: any, results: any, fields: any) => {
             callback(err, results, fields);
@@ -113,8 +113,8 @@ export class MysqlClass {
 
     public insertTable(table: string, data: IQueryObject | Array<string | number>, callback: any) {
         let sqlStr = Array.isArray(data) ?
-            MySql.format("insert into ?? values(??)", [table, (<Array<string | number>>data).join(", ")]) :
-            MySql.format("insert into ?? set ?", [table, data]);
+            format("insert into ?? values(??)", [table, (<Array<string | number>>data).join(", ")]) :
+            format("insert into ?? set ?", [table, data]);
         this.sqlQuery({
             sql: sqlStr,
             timeout: this.timeout
@@ -126,8 +126,8 @@ export class MysqlClass {
     public updateTable(table: string, update: IQueryObject, condition: IQueryObject | string, callback: any) {
         this.sqlQuery({
             sql: typeof condition === "string" ?
-                MySql.format("update ?? set ? where ??", [table, update, condition]) :
-                MySql.format("update ?? set ? where ?", [table, update, condition]),
+                format("update ?? set ? where ??", [table, update, condition]) :
+                format("update ?? set ? where ?", [table, update, condition]),
             timeout: this.timeout
         }, (err: any, results: any, fields: any) => {
             callback(err, results, fields);
@@ -137,8 +137,8 @@ export class MysqlClass {
     public deleteRow(table: string, condition: IQueryObject | string, callback: any) {
         this.sqlQuery({
             sql: typeof condition === "string" ?
-                MySql.format("delete from ?? where ??", [table, condition]) :
-                MySql.format("delete from ?? where ?", [table, condition]),
+                format("delete from ?? where ??", [table, condition]) :
+                format("delete from ?? where ?", [table, condition]),
             timeout: this.timeout
         }, (err: any, results: any, fields: any) => {
             callback(err, results, fields);
