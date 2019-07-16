@@ -30,31 +30,6 @@ export class MysqlClass {
 
     }
 
-    public sqlQuery1(sql: QueryOptions, callback?: any) {
-        // 使用连接池
-        const mysqlPool = createPool({
-            host: "localhost",
-            user: "root",
-            password: "123456",
-            port: 3306,
-            database: "test",
-            connectionLimit: 10000
-        });
-
-        mysqlPool.getConnection((err: any, conn: any) => {
-            if (err) {
-                callback(err, null, null);
-            } else {
-                conn.query(sql, (err: any, vals: any, fields: any) => {
-                    //释放连接
-                    conn.release();
-                    //事件驱动回调
-                    callback(err, vals, fields);
-                });
-            }
-        });
-    }
-
     public sqlQuery(sql: QueryOptions, callback: any) {
         let resErr = <IError>{
             err: false
@@ -79,8 +54,6 @@ export class MysqlClass {
                 });
             }
         });
-
-        return <ISqlRes>{ err: resErr };
     }
 
     public and(dataObject: IQueryObject): string {
@@ -100,15 +73,6 @@ export class MysqlClass {
         }, (err: any, results: any, fields: any) => {
             callback(err, results, fields);
         })
-    }
-
-    public createTable(sqlStr: string, callback?: any) {
-        this.sqlQuery1({
-            sql: sqlStr,
-            timeout: this.timeout
-        }, (err: Error, res: any, fields: any) => {
-            callback(err, res, fields);
-        });
     }
 
     public insertTable(table: string, data: IQueryObject | Array<string | number>, callback: any) {

@@ -57,7 +57,10 @@ export default class ORM extends MysqlClass implements IORM {
             sqlStr += this.createTableFieldMap[key];
         }
         const createTableSql: string = `CREATE TABLE ${this.table} (${sqlStr}) ENGINE=InnoDB DEFAULT CHARSET=utf8`;
-        this.createTable(createTableSql, (err: Error, result: any, field: any) => {
+        this.sqlQuery({
+            sql: createTableSql,
+            timeout: 2000
+        }, (err: Error, result: any, field: any) => {
             callback(err, result, field);
         });
     }
