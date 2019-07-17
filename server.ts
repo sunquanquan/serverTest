@@ -4,6 +4,7 @@ import { Channel } from './socket/channel';
 import { MysqlClass } from './mysql/mysql';
 import { TableBase } from './parseTables/tableBase';
 import { TableLoad } from './parseTables/tableLoad';
+import { proto_login } from './protocol/message/proto_login';
 
 class Svr {
 
@@ -13,6 +14,9 @@ class Svr {
 
         // tables init
         TableLoad.getInstance().initTable();
+
+        // message init
+        proto_login.MessageInit.getInstance().init();
 
         // websocket server init
         let httpServer = http.createServer().listen(3000, () => {

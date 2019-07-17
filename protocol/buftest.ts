@@ -1,11 +1,33 @@
-var basepb = require('./buftest_pb');
+const buftestpb = require('./protobuf/buftest_pb');
 
-console.log(basepb);
-var message = new basepb.SearchRequest();
-console.log(message);
+export class Proto {
+    protected static _proto: Proto;
+    public static getInstance(): Proto {
+        if(!this._proto) {
+            this._proto = new Proto();
+        }
+        return this._proto;
+    }
+
+    public getSerializeBinary(message: any) {
+        return message.serializeBinary();
+    }
+
+    public getDeserializeBinary(bytes: any) {
+        return buftestpb.SearchRequest.deserializeBinary(bytes);
+    }
+}
+
+// console.log(buftestpb);
+// for(let key in buftestpb) {
+//     console.log("-------------");
+//     console.log(key);
+// }
+const message = new buftestpb.SearchRequest();
 message.setName("TS");
 message.setPassword("123456");
-var bytes = message.serializeBinary();
+console.log(message);
+const bytes = message.serializeBinary();
 console.log(bytes);
-var message2 = basepb.SearchRequest.deserializeBinary(bytes);
-console.log(message2);
+const message2 = buftestpb.SearchRequest.deserializeBinary(bytes);
+console.log(message2.toObject());

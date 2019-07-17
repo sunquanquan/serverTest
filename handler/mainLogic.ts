@@ -1,5 +1,6 @@
 import { IHandlerMessage } from "../socket/IHandlerMessage";
 import { IMessage, connection } from "websocket";
+import { proto_login } from "../protocol/message/proto_login";
 
 export class MainLogic implements IHandlerMessage {
 
@@ -18,7 +19,12 @@ export class MainLogic implements IHandlerMessage {
     }
 
     public async handlerMessage(msg: IMessage) {
-        console.log("get message: " + JSON.stringify(msg));
+        console.log(msg);
+        if (msg.utf8Data) {
+            let reqData: any = JSON.parse(msg.utf8Data) as proto_login.LoginC2S;
+            console.log(reqData.name);
+            // proto_login.MessageInit.getInstance().get
+        }
         // const user = new UserDataTab();
         // user.create((err: Error, result: any, field: any) => {
         //     console.log(err);

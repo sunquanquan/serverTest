@@ -1,4 +1,7 @@
 #!/usr/bin/env node
+
+import { proto_login } from "../protocol/message/proto_login";
+
 var WebSocketClient = require('websocket').client;
  
 var client = new WebSocketClient();
@@ -23,8 +26,10 @@ client.on('connect', function(connection: any) {
     
     // function sendNumber() {
         if (connection.connected) {
-            var number = Math.round(Math.random() * 0xFFFFFF);
-            connection.sendUTF(number.toString());
+            let sendData: proto_login.LoginC2S = new proto_login.LoginC2S();
+            sendData.username = "aa";
+            sendData.password = "12";
+            connection.sendUTF(JSON.stringify(sendData));
             // setTimeout(sendNumber, 1000);
         }
     // }
