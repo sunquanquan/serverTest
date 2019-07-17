@@ -1,13 +1,12 @@
 import { IHandlerMessage } from "../socket/IHandlerMessage";
 import { IMessage, connection } from "websocket";
-import { UserDataTab } from "../mysqlTables/user";
 
 export class MainLogic implements IHandlerMessage {
 
     protected static _mainLogic: MainLogic;
     public static getInstance(): MainLogic {
         if (!this._mainLogic) {
-            this._mainLogic = new MainLogic()
+            this._mainLogic = new MainLogic();
         }
         return this._mainLogic;
     }
@@ -20,7 +19,7 @@ export class MainLogic implements IHandlerMessage {
 
     public async handlerMessage(msg: IMessage) {
         console.log("get message: " + JSON.stringify(msg));
-        const user = new UserDataTab();
+        // const user = new UserDataTab();
         // user.create((err: Error, result: any, field: any) => {
         //     console.log(err);
         //     console.log(result);

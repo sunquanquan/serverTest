@@ -2,12 +2,17 @@ import * as http from 'http';
 import { server, request, connection } from 'websocket';
 import { Channel } from './socket/channel';
 import { MysqlClass } from './mysql/mysql';
+import { TableBase } from './parseTables/tableBase';
+import { TableLoad } from './parseTables/tableLoad';
 
 class Svr {
 
     public initSvr() {
         // mysql init
         MysqlClass.getInstance().initDB();
+
+        // tables init
+        TableLoad.getInstance().initTable();
 
         // websocket server init
         let httpServer = http.createServer().listen(3000, () => {
