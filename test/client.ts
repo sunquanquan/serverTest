@@ -12,6 +12,9 @@ client.on('connectFailed', function(error: any) {
  
 client.on('connect', function(connection: any) {
     console.log('WebSocket Client Connected');
+
+    proto_login.MessageInit.getInstance().init();
+
     connection.on('error', function(error: any) {
         console.log("Connection Error: " + error.toString());
     });
@@ -29,7 +32,8 @@ client.on('connect', function(connection: any) {
             let sendData: proto_login.LoginC2S = new proto_login.LoginC2S();
             sendData.username = "aa";
             sendData.password = "12";
-            connection.sendUTF(JSON.stringify(sendData));
+            // connection.sendUTF(JSON.stringify(sendData));
+            connection.sendBytes(proto_login.MessageInit.getInstance().write(sendData));
             // setTimeout(sendNumber, 1000);
         }
     // }

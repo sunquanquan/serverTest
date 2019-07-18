@@ -19,12 +19,21 @@ export class MainLogic implements IHandlerMessage {
     }
 
     public async handlerMessage(msg: IMessage) {
-        console.log(msg);
-        if (msg.utf8Data) {
-            let reqData: any = JSON.parse(msg.utf8Data) as proto_login.LoginC2S;
-            console.log(reqData.name);
-            // proto_login.MessageInit.getInstance().get
+        let reqData: Buffer | undefined = msg.binaryData;
+        if (!reqData) {
+            return;
         }
+        let actData = proto_login.MessageInit.getInstance().read(reqData);
+        let key = proto_login.MessageInit.getInstance().commandKey;
+        switch (actData[key]) {
+            case proto_login.LoginC2S["name"]:
+                console.log("11111111111111");
+                console.log(actData);
+                break;
+            default:
+                break;
+        }
+
         // const user = new UserDataTab();
         // user.create((err: Error, result: any, field: any) => {
         //     console.log(err);

@@ -41,3 +41,38 @@ class Svr {
 
 let svr: Svr = new Svr();
 svr.initSvr();
+
+// class Test {
+//     a: number = 11;
+// }
+
+// let arr: any = [Test];
+
+// let obj: any = {};
+
+// for (let test of arr) {
+//     if (!test["aa"]) {
+//         test["aa"] = 1;
+//         obj[1] = test;
+//     }
+// }
+// console.log(arr);
+// console.log(new obj[1]());
+// console.log(obj[1]["aa"]);
+
+// let test: any = new Test();
+// console.log(test["__proto__"]["constructor"]["aa"]);
+
+// let test = new Test();
+// console.log(test);
+// let testStr = JSON.stringify(test);
+// let length = testStr.length;
+// console.log(length);
+// let testBuffer = Buffer.alloc(length + 5, testStr, 'utf8');
+// console.log(testBuffer);
+// console.log(testBuffer.length);
+// testBuffer.writeUInt32LE(100000,length);
+// console.log(testBuffer);
+// console.log(testBuffer.readInt32LE(length));
+// let aa = testBuffer.slice(0,length);
+// console.log(JSON.parse(aa.toString()) as Test);
