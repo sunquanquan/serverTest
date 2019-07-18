@@ -51,24 +51,30 @@ export class ORM implements IORM {
         });
     }
 
-    public create(callback: any) {
+    public create() {
         let sqlStr: string = "";
         for (let key in this.createTableFieldMap) {
             sqlStr += this.createTableFieldMap[key];
         }
-        const createTableSql: string = `CREATE TABLE ${this.table} (${sqlStr}) ENGINE=InnoDB DEFAULT CHARSET=utf8`;
+        const createTableSql: string = `create table if not exists ${this.table} (${sqlStr}) ENGINE=InnoDB DEFAULT CHARSET=utf8;`;
         MysqlClass.getInstance().sqlQuery({
             sql: createTableSql,
             timeout: 2000
         }, (err: Error, result: any, field: any) => {
-            callback(err, result, field);
+            if(err) {
+                console.log(err);
+            }
+            // callback(err, result, field);
         });
     }
 
-    public insert(data: IField, callback: any) {
+    public insert(data: any) {
         const dbData: IField = this.getFieldObject(data);
         MysqlClass.getInstance().insertTable(this.table, dbData, (err: any, results: any, fields: any) => {
-            callback(err, results, fields);
+            if(err) {
+                console.log(err);
+            }
+            // callback(err, result, field);
         });
     }
     public update(data: IField, condition: IField | string, callback: any) {
@@ -79,7 +85,7 @@ export class ORM implements IORM {
         });
     }
 
-    public getFieldObject(data: IField): IField {
+    public getFieldObject(data: any): IField {
         return Object.keys(data).reduce((acc: any, curKey: string) => {
             acc[this.fieldMap[curKey]] = data[curKey];
             return acc;

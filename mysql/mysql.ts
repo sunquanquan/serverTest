@@ -1,5 +1,6 @@
 import { IError, IField } from "./orm";
 import { QueryOptions, createPool, escape, format, PoolConnection, MysqlError, Pool } from "mysql";
+import { MysqlConfig } from "../config/gameConfig";
 
 export interface ISqlResults {
     results: Array<IField>;
@@ -29,11 +30,11 @@ export class MysqlClass {
 
     public initDB() {
         this.pool = createPool({
-            host: "localhost",
-            user: "root",
-            password: "123456",
-            port: 3306,
-            database: "test",
+            host: MysqlConfig.host,
+            user: MysqlConfig.user,
+            password: MysqlConfig.password,
+            port: MysqlConfig.port,
+            database: MysqlConfig.database
         });
     }
 

@@ -1,4 +1,4 @@
-import { IField, ORM } from "../mysql/ORM";
+import { IField, ORM } from "../ORM";
 
 // 数据类
 export class UserData {
@@ -11,6 +11,13 @@ export class UserData {
 
 // 只需要继承ORM类即可
 export class UserDataTab extends ORM {
+    protected static _userDataTab: UserDataTab;
+    public static getInstance(): UserDataTab {
+        if (!this._userDataTab) {
+            this._userDataTab = new UserDataTab();
+        }
+        return this._userDataTab;
+    }
     // 字段名
     public id: string = "user_id";
     public nickname: string = "user_nickname";
@@ -37,7 +44,7 @@ export class UserDataTab extends ORM {
         password: this.password,
         createTime: this.createTime
     };
-   
+
     // 指定数据库表名
     public table: string = "user";
 
@@ -47,5 +54,28 @@ export class UserDataTab extends ORM {
         return acc;
     }, {});
 }
+
+
+// const user = new UserDataTab();
+        // user.create((err: Error, result: any, field: any) => {
+        //     console.log(err);
+        //     console.log(result);
+        //     console.log(field);
+        // });
+        // user.insert(user.defaultValue,(err: Error, result: any, field: any) => {
+        //     console.log(err);
+        //     console.log(result);
+        //     console.log(field);
+        // })
+        // user.fetchAll((err: Error, result: any, field: any) => {
+        //     console.log(err);
+        //     console.log(result);
+        //     console.log(field);
+        // });
+        // user.fetch({nickname: 'sss'},(err: Error, result: any, field: any) => {
+        //     console.log(err);
+        //     console.log(result);
+        //     console.log(field);
+        // });
 
 

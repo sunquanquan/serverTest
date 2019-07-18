@@ -1,27 +1,26 @@
 import { connection, IMessage } from "websocket";
-import { MainLogic } from "../handler/mainLogic";
+import { MainLogic } from "../handler/main/mainLogic";
 
 export class Channel {
-    protected static _channel: Channel;
-    public static getInstance(): Channel {
-        if(!this._channel) {
-            this._channel = new Channel();
-        }
-        return this._channel;
+    public _conn!: connection;
+    protected _handler!: MainLogic;
+
+    public setHandler(mainLogic: MainLogic) {
+        this._handler = mainLogic;
     }
 
     public initConn(connection: connection) {
-        MainLogic.getInstance().setChannel(connection);
-        connection.on("message", (msg: IMessage) => {
+        this._conn = connection;
+        this._conn.on("message", (msg: IMessage) => {
             if(msg.type == 'utf8') {
-                MainLogic.getInstance().handlerMessage(msg);
+                this._handler.handlerMessage(msg);
             }
             if(msg.type == 'binary') {
-                MainLogic.getInstance().handlerMessage(msg);
+                this._handler.handlerMessage(msg);
             }
         });
 
-        connection.on("close", (code: number, desc: string) => {
+        this._conn.on("close", (code: number, desc: string) => {
             console.log("socket is close");
         })
     }
