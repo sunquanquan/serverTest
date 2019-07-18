@@ -55,6 +55,7 @@ export namespace proto_login {
         }
     }
 
+    ////////////////////////////////////////////////////////////////////////
 
     // 协议
     export class LoginC2S {
