@@ -34,13 +34,19 @@ function clientConn(username: string, password: string) {
             sendData.username = username;
             sendData.password = password;
             connection.sendBytes(proto_login.MessageInit.getInstance().write(sendData));
+
+            setInterval(() => {
+                let sendData: proto_login.TestC2S = new proto_login.TestC2S();
+                sendData.username = username + "11111111111";
+                connection.sendBytes(proto_login.MessageInit.getInstance().write(sendData));
+            }, 10000);
         }
     });
     client.connect('ws://localhost:3000/', 'echo-protocol');
 }
 
 let password = "123456";
-for (let i = 0; i < 2; i++) {
+for (let i = 0; i < 1; i++) {
     let username = "sun_" + i;
     clientConn(username, password);
 }

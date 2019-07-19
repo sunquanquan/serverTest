@@ -22,7 +22,7 @@ export class SocketSvr {
             let channel = new Channel();
             channel.initConn(connection);
             cb(channel);
-        })
+        });
     }
     public originIsAllow(origin: any) {
         return true;

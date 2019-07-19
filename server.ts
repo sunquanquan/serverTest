@@ -19,7 +19,7 @@ class Svr {
         // message init
         proto_login.MessageInit.getInstance().init();
 
-        let socketSrv = new SocketSvr()
+        let socketSrv = new SocketSvr();
         socketSrv.initSvr((channel: Channel) => {
             let mainLogic: MainLogic = new MainLogic();
             mainLogic.setChannel(channel);

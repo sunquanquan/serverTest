@@ -16,7 +16,7 @@ export namespace proto_login {
         }
 
         public init() {
-            const messageArr: any = [LoginC2S, TestC2S];
+            const messageArr: any = [LoginC2S, LoginS2C, TestC2S];
             let command: number = 0;
             for (let messageTemp of messageArr) {
                 command++;
@@ -25,7 +25,6 @@ export namespace proto_login {
                     this._message[command] = messageTemp;
                 }
             }
-            console.log(this._message);
         }
 
         public getObjectId(message: any) {
@@ -62,6 +61,9 @@ export namespace proto_login {
         username: string = "";
         password: string = "";
         ipAddress?: string;
+    }
+    export class LoginS2C {
+        code: number = 0;
     }
     export class TestC2S {
         username: string = "";
