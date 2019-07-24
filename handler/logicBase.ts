@@ -1,7 +1,7 @@
 import { MainLogic } from "./main/mainLogic";
 import { connection, IMessage } from "websocket";
-import { proto_login } from "../protocol/message/proto_login";
 import { UserData } from "../mysql/tables/user";
+import { MessageInit } from "../protocol/message/messageInit";
 
 export class LogicBase {
     public _userData!: UserData;
@@ -12,14 +12,22 @@ export class LogicBase {
         mainLogic.pushLogicBase(this);
     }
 
-    public setConn(conn?: connection) {
+    public setConn(conn?: connection): void {
         if (conn) {
             this._conn = conn;
         }
     }
 
+    public setUserData(userData: UserData): void {
+        this._userData = userData;
+    }
+
+    public getUserData(): UserData {
+        return this._userData;
+    }
+
     public sendMsg(msg: any) {
-        let sendBuf: Buffer = proto_login.MessageInit.getInstance().write(msg);
+        let sendBuf: Buffer = MessageInit.getInstance().write(msg);
         this._conn.sendBytes(sendBuf);
     }
 }

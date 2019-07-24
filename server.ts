@@ -1,14 +1,19 @@
 import { Channel } from './socket/channel';
 import { MysqlClass } from './mysql/mysql';
 import { TableLoad } from './parseTables/tableLoad';
-import { proto_login } from './protocol/message/proto_login';
 import { MysqlLoad } from './mysql/mysqLoad';
 import { MainLogic } from './handler/main/mainLogic';
 import { SocketSvr } from './socket/socketSrv';
+import { MessageInit } from './protocol/message/messageInit';
 
 class Svr {
 
     public initSvr() {
+
+        process.on('uncaughtException', (err: Error) => {
+            console.log('Caught exception: ' + err);
+        });
+
         // mysql init
         MysqlClass.getInstance().initDB();
         MysqlLoad.getInstance().initMysqlTablb();
@@ -17,10 +22,11 @@ class Svr {
         TableLoad.getInstance().initTable();
 
         // message init
-        proto_login.MessageInit.getInstance().init();
+        MessageInit.getInstance().init();
 
         let socketSrv = new SocketSvr();
         socketSrv.initSvr((channel: Channel) => {
+            console.log("1111111111111111111");
             let mainLogic: MainLogic = new MainLogic();
             mainLogic.setChannel(channel);
         });

@@ -1,26 +1,26 @@
 import { IHandlerMessage } from "../../socket/IHandlerMessage";
 import { IMessage, connection } from "websocket";
-import { proto_login } from "../../protocol/message/proto_login";
 import { LoginLogic } from "../login/loginLogic";
 import { Channel } from "../../socket/channel";
 import { TestLogic } from "../login/testLogic";
 import { LogicBase } from "../logicBase";
+import { UserData, UserDataTab } from "../../mysql/tables/user";
+import { v1 } from 'uuid';
+import { MessageInit } from "../../protocol/message/messageInit";
+import { proto } from "../../protocol/message/proto";
 
 export class MainLogic implements IHandlerMessage {
-
-    // protected static _mainLogic: MainLogic;
-    // public static getInstance(): MainLogic {
-    //     if (!this._mainLogic) {
-    //         this._mainLogic = new MainLogic();
-    //     }
-    //     return this._mainLogic;
-    // }
     public logicBaseArr: LogicBase[] = [];
-    public loginLogic?: LoginLogic;
-    public testLogic?: TestLogic;
+    public loginLogic!: LoginLogic
+    public testLogic!: TestLogic;
 
     public _connection?: connection;
     protected _channel?: Channel;
+
+    public setLogic() {
+        this.loginLogic = new LoginLogic(this);
+        this.testLogic = new TestLogic(this);
+    }
 
     public pushLogicBase(logicBase: LogicBase) {
         this.logicBaseArr.push(logicBase);
@@ -30,12 +30,7 @@ export class MainLogic implements IHandlerMessage {
         this._channel = channel;
         this._channel.setHandler(this);
         this._connection = this._channel._conn;
-        if (!this.loginLogic) {
-            this.loginLogic = new LoginLogic(this);
-        }
-        if (!this.testLogic) {
-            this.testLogic = new TestLogic(this);
-        }
+        this.setLogic();
     }
 
     public async handlerMessage(msg: IMessage) {
@@ -43,15 +38,16 @@ export class MainLogic implements IHandlerMessage {
         if (!reqData) {
             return;
         }
-        let actData = proto_login.MessageInit.getInstance().read(reqData);
-        let key = proto_login.MessageInit.getInstance().commandKey;
+        let actData = MessageInit.getInstance().read(reqData);
+        let key = MessageInit.getInstance().commandKey;
         switch (actData[key]) {
-            case proto_login.LoginC2S["name"]:
+            case proto.LoginC2S["name"]:
                 if (this.loginLogic) {
-                    this.loginLogic.handlerLogin(actData);
+                    // this.loginLogic.handlerLogin(actData);
+                    this.handlerLogin(actData);
                 }
                 break;
-            case proto_login.TestC2S["name"]:
+            case proto.TestC2S["name"]:
                 if (this.testLogic) {
                     this.testLogic.handlerLogin(actData);
                 }
@@ -62,5 +58,27 @@ export class MainLogic implements IHandlerMessage {
     }
     public handlerClose(code: number, desc: string) {
         console.log("socket closed: code:" + code + "desc: " + desc);
+    }
+
+    public handlerLogin(msg: proto.LoginC2S) {
+        let userData: UserData = new UserData();
+        userData.id = v1();
+        userData.nickname = msg.username;
+        userData.password = msg.password;
+        userData.createTime = new Date().getTime().toString();
+        UserDataTab.getInstance().insert(userData);
+        let resData: proto.LoginS2C = new proto.LoginS2C();
+        resData.code = 1;
+        for (let baseLogic of this.logicBaseArr) {
+            baseLogic.setUserData(userData);
+        }
+        this.sendMsg(resData);
+    }
+
+    public sendMsg(msg: any) {
+        let sendBuf: Buffer = MessageInit.getInstance().write(msg);
+        if (this._connection) {
+            this._connection.sendBytes(sendBuf);
+        }
     }
 }

@@ -1,4 +1,4 @@
-import { proto_login } from "../../protocol/message/proto_login";
+import { proto } from "../../protocol/message/proto";
 import { UserDataTab, UserData } from "../../mysql/tables/user";
 import { v1 } from 'uuid';
 import { MainLogic } from "../main/mainLogic";
@@ -11,7 +11,7 @@ export class LoginLogic extends LogicBase {
         super(mainLogic);
     }
 
-    handlerLogin(msg: proto_login.LoginC2S) {
+    handlerLogin(msg: proto.LoginC2S) {
         let userData: UserData = new UserData();
         userData.id = v1();
         userData.nickname = msg.username;
@@ -21,7 +21,7 @@ export class LoginLogic extends LogicBase {
         this._userData = userData;
         this.aa++;
         console.log(this.aa);
-        let resData: proto_login.LoginS2C = new proto_login.LoginS2C();
+        let resData: proto.LoginS2C = new proto.LoginS2C();
         resData.code = 1;
         this.sendMsg(resData);
     }
