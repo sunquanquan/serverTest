@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import { proto } from "../protocol/message/proto";
 import { IMessage } from "websocket";
 import { MessageInit } from "../protocol/message/messageInit";

@@ -24,9 +24,9 @@ class Svr {
         // message init
         MessageInit.getInstance().init();
 
+        // server init
         let socketSrv = new SocketSvr();
         socketSrv.initSvr((channel: Channel) => {
-            console.log("1111111111111111111");
             let mainLogic: MainLogic = new MainLogic();
             mainLogic.setChannel(channel);
         });

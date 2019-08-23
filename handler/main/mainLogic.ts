@@ -11,7 +11,7 @@ import { proto } from "../../protocol/message/proto";
 
 export class MainLogic implements IHandlerMessage {
     public logicBaseArr: LogicBase[] = [];
-    public loginLogic!: LoginLogic
+    public loginLogic!: LoginLogic;
     public testLogic!: TestLogic;
 
     public _connection?: connection;
