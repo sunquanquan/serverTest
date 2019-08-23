@@ -1,0 +1,19 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    // 调试ts代码，在tsconfig.json把sourceMap=true放开
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "server",
+            "program": "${workspaceFolder}/serverJS/server.js",
+            "preLaunchTask": "tsc: watch - tsconfig.json",      //VSCode 编译改变的文件
+            "outFiles": [
+                "${workspaceFolder}/**/*.js"
+            ]
+        }
+    ]
+}
