@@ -1,7 +1,7 @@
 import { MainLogic } from "./main/mainLogic";
 import { connection, IMessage } from "websocket";
-import { UserData } from "../mysql/tables/user";
-import { MessageInit } from "../protocol/message/messageInit";
+import { UserData } from "../../common/mysql/tables/user";
+import { MessageInit } from "../../protocol/message/messageInit";
 
 export class LogicBase {
     public _userData!: UserData;

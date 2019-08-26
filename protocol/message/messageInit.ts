@@ -1,4 +1,4 @@
-import { proto } from "./proto";
+import { message } from "./message";
 
 export class MessageInit {
         
@@ -18,9 +18,9 @@ export class MessageInit {
 
     public init() {
         const messageArr = [];
-        let protoTemp: any = proto;
-        for(let aa in protoTemp) {
-            messageArr.push(protoTemp[aa]);
+        let messageTemp: any = message;
+        for(let aa in messageTemp) {
+            messageArr.push(messageTemp[aa]);
         }
         let command: number = 0;
         for (let messageTemp of messageArr) {

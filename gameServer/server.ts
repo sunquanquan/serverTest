@@ -1,10 +1,10 @@
-import { Channel } from './socket/channel';
-import { MysqlClass } from './mysql/mysql';
-import { TableLoad } from './parseTables/tableLoad';
-import { MysqlLoad } from './mysql/mysqLoad';
+import { Channel } from '../common/socket/channel';
+import { MysqlClass } from '../common/mysql/mysql';
+import { TableLoad } from '../common/parseTables/tableLoad';
+import { MysqlLoad } from '../common/mysql/mysqLoad';
 import { MainLogic } from './handler/main/mainLogic';
-import { SocketSvr } from './socket/socketSrv';
-import { MessageInit } from './protocol/message/messageInit';
+import { SocketSvr } from '../common/socket/socketSrv';
+import { MessageInit } from '../protocol/message/messageInit';
 
 class Svr {
 

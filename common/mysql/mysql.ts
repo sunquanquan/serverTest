@@ -1,6 +1,6 @@
 import { IError, IField } from "./orm";
 import { QueryOptions, createPool, escape, format, PoolConnection, MysqlError, Pool } from "mysql";
-import { MysqlConfig } from "../config/gameConfig";
+import { MysqlConfig } from "../../config/gameConfig";
 
 export interface ISqlResults {
     results: Array<IField>;

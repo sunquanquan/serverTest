@@ -1,4 +1,4 @@
-import { proto } from "../protocol/message/proto";
+import { message } from "../protocol/message/message";
 import { IMessage } from "websocket";
 import { MessageInit } from "../protocol/message/messageInit";
 
@@ -37,13 +37,13 @@ function clientConn(username: string, password: string) {
         });
 
         if (connection.connected) {
-            let sendData: proto.LoginC2S = new proto.LoginC2S();
+            let sendData: message.LoginC2S = new message.LoginC2S();
             sendData.username = username;
             sendData.password = password;
             connection.sendBytes(MessageInit.getInstance().write(sendData));
 
             setInterval(() => {
-                let sendData: proto.TestC2S = new proto.TestC2S();
+                let sendData: message.TestC2S = new message.TestC2S();
                 sendData.username = username + "11111111111";
                 connection.sendBytes(MessageInit.getInstance().write(sendData));
             }, 10000);

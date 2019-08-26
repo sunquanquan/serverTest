@@ -6,6 +6,6 @@ export class MysqlConfig {
     public static readonly port: number = 3306;
 }
 
-export class GameConfig {
+export class GameSrvConfig {
     public static readonly port: number = 3000;
 }

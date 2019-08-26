@@ -1,4 +1,4 @@
-export namespace proto {
+export namespace message {
     // 协议
     export class LoginC2S {
         username: string = "";

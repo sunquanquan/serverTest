@@ -1,24 +1,21 @@
-import { IHandlerMessage } from "../../socket/IHandlerMessage";
+import { IHandlerMessage } from "../../../common/socket/IHandlerMessage";
 import { IMessage, connection } from "websocket";
-import { LoginLogic } from "../login/loginLogic";
-import { Channel } from "../../socket/channel";
-import { TestLogic } from "../login/testLogic";
+import { Channel } from "../../../common/socket/channel";
+import { TestLogic } from "../test.ts/testLogic";
 import { LogicBase } from "../logicBase";
-import { UserData, UserDataTab } from "../../mysql/tables/user";
+import { UserData, UserDataTab } from "../../../common/mysql/tables/user";
 import { v1 } from 'uuid';
-import { MessageInit } from "../../protocol/message/messageInit";
-import { proto } from "../../protocol/message/proto";
+import { MessageInit } from "../../../protocol/message/messageInit";
+import { message } from "../../../protocol/message/message";
 
 export class MainLogic implements IHandlerMessage {
     public logicBaseArr: LogicBase[] = [];
-    public loginLogic!: LoginLogic;
     public testLogic!: TestLogic;
 
     public _connection?: connection;
     protected _channel?: Channel;
 
     public setLogic() {
-        this.loginLogic = new LoginLogic(this);
         this.testLogic = new TestLogic(this);
     }
 
@@ -41,13 +38,10 @@ export class MainLogic implements IHandlerMessage {
         let actData = MessageInit.getInstance().read(reqData);
         let key = MessageInit.getInstance().commandKey;
         switch (actData[key]) {
-            case proto.LoginC2S["name"]:
-                if (this.loginLogic) {
-                    // this.loginLogic.handlerLogin(actData);
-                    this.handlerLogin(actData);
-                }
+            case message.LoginC2S["name"]:
+                this.handlerLogin(actData);
                 break;
-            case proto.TestC2S["name"]:
+            case message.TestC2S["name"]:
                 if (this.testLogic) {
                     this.testLogic.handlerLogin(actData);
                 }
@@ -60,14 +54,14 @@ export class MainLogic implements IHandlerMessage {
         console.log("socket closed: code:" + code + "desc: " + desc);
     }
 
-    public handlerLogin(msg: proto.LoginC2S) {
+    public handlerLogin(msg: message.LoginC2S) {
         let userData: UserData = new UserData();
         userData.id = v1();
         userData.nickname = msg.username;
         userData.password = msg.password;
         userData.createTime = new Date().getTime().toString();
         UserDataTab.getInstance().insert(userData);
-        let resData: proto.LoginS2C = new proto.LoginS2C();
+        let resData: message.LoginS2C = new message.LoginS2C();
         resData.code = 1;
         for (let baseLogic of this.logicBaseArr) {
             baseLogic.setUserData(userData);

@@ -1,5 +1,5 @@
 import * as http from 'http';
-import { GameConfig } from '../config/gameConfig';
+import { GameSrvConfig } from '../../config/gameConfig';
 import { server, request, connection } from 'websocket';
 import { Channel } from './channel';
 
@@ -7,8 +7,8 @@ export class SocketSvr {
 
     public initSvr(cb: any) {
         // websocket server init
-        let httpServer = http.createServer().listen(GameConfig.port, () => {
-            console.log((new Date()) + ` Server is listening on port ${GameConfig.port}`);
+        let httpServer = http.createServer().listen(GameSrvConfig.port, () => {
+            console.log((new Date()) + ` Server is listening on port ${GameSrvConfig.port}`);
         })
         let wsServer = new server({
             httpServer: httpServer,

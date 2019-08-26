@@ -1,11 +1,10 @@
 import { connection, IMessage } from "websocket";
-import { MainLogic } from "../handler/main/mainLogic";
 
 export class Channel {
     public _conn!: connection;
-    protected _handler!: MainLogic;
+    protected _handler: any;
 
-    public setHandler(mainLogic: MainLogic) {
+    public setHandler(mainLogic: any) {
         this._handler = mainLogic;
     }
 
