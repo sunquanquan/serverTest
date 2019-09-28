@@ -6,7 +6,7 @@ import { MainLogic } from './handler/main/mainLogic';
 import { SocketSvr } from '../common/socket/socketSrv';
 import { MessageInit } from '../protocol/message/messageInit';
 
-class Svr {
+class GameSvr {
 
     public initSvr() {
 
@@ -33,5 +33,5 @@ class Svr {
     }
 }
 
-let svr: Svr = new Svr();
-svr.initSvr();
+let gameSvr: GameSvr = new GameSvr();
+gameSvr.initSvr();
