@@ -1,26 +1,28 @@
 import { IHandlerMessage } from "../../common/socket/IHandlerMessage";
 import { IMessage, connection } from "websocket";
 import { Channel } from "../../common/socket/channel";
-import { TestLogic } from "./test.ts/testLogic";
-import { LogicBase } from "./logicBase";
+import { TestLogic } from "./test/testLogic";
+import { BaseLogic } from "./baseLogic";
 import { UserData, UserDataTab } from "../../common/mysql/tables/user";
 import { v1 } from 'uuid';
 import { MessageInit } from "../../protocol/message/messageInit";
 import { message } from "../../protocol/message/message";
+import { Main } from "./main";
 
 export class UserMainLogic implements IHandlerMessage {
-    public logicBaseArr: LogicBase[] = [];
+    public baseLogicArr: BaseLogic[] = [];
     private testLogic!: TestLogic;
 
     public _connection?: connection;
     protected _channel?: Channel;
+    public _uid!: string;
 
     public setLogic() {
         this.testLogic = new TestLogic(this);
     }
 
-    public pushLogicBase(logicBase: LogicBase) {
-        this.logicBaseArr.push(logicBase);
+    public pushBaseLogic(baseLogic: BaseLogic) {
+        this.baseLogicArr.push(baseLogic);
     }
 
     public setChannel(channel: Channel) {
@@ -43,7 +45,7 @@ export class UserMainLogic implements IHandlerMessage {
                 break;
             case message.TestC2S["name"]:
                 if (this.testLogic) {
-                    this.testLogic.handlerLogin(actData);
+                    this.testLogic.handlerTest(actData);
                 }
                 break;
             default:
@@ -60,12 +62,18 @@ export class UserMainLogic implements IHandlerMessage {
         userData.nickname = msg.username;
         userData.password = msg.password;
         userData.createTime = new Date().getTime().toString();
-        UserDataTab.getInstance().insert(userData);
-        let resData: message.LoginS2C = new message.LoginS2C();
-        resData.code = 1;
-        for (let baseLogic of this.logicBaseArr) {
+        this._uid = userData.id;
+        for (let baseLogic of this.baseLogicArr) {
             baseLogic.setUserData(userData);
         }
+        Main.getInstance().pushUserMap(this);
+
+        // 存库
+        UserDataTab.getInstance().insert(userData);
+
+        let resData: message.LoginS2C = new message.LoginS2C();
+        resData.code = 1;
+        // 返回
         this.sendMsg(resData);
     }
 
