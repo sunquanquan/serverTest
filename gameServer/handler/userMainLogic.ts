@@ -3,15 +3,16 @@ import { IMessage, connection } from "websocket";
 import { Channel } from "../../common/socket/channel";
 import { TestLogic } from "./test/testLogic";
 import { BaseLogic } from "./baseLogic";
-import { UserData, UserDataTab } from "../../common/mysql/tables/user";
-import { v1 } from 'uuid';
+import { UserData } from "../../common/mysql/tables/user";
 import { MessageInit } from "../../protocol/message/messageInit";
 import { message } from "../../protocol/message/message";
 import { Main } from "./main";
+import { UserLogic } from "./user/userLogic";
 
 export class UserMainLogic implements IHandlerMessage {
-    public baseLogicArr: BaseLogic[] = [];
+    private baseLogicArr: BaseLogic[] = [];
     private testLogic!: TestLogic;
+    private userLogic!: UserLogic;
 
     public _connection?: connection;
     protected _channel?: Channel;
@@ -19,6 +20,7 @@ export class UserMainLogic implements IHandlerMessage {
 
     public setLogic() {
         this.testLogic = new TestLogic(this);
+        this.userLogic = new UserLogic(this);
     }
 
     public pushBaseLogic(baseLogic: BaseLogic) {
@@ -41,7 +43,14 @@ export class UserMainLogic implements IHandlerMessage {
         let key = MessageInit.getInstance().commandKey;
         switch (actData[key]) {
             case message.LoginC2S["name"]:
-                this.handlerLogin(actData);
+                let userData: UserData = await this.userLogic.handlerLogin(actData);
+                if(userData) {
+                    this._uid = userData.id;
+                    for (let baseLogic of this.baseLogicArr) {
+                        baseLogic.setUserData(userData);
+                    }
+                    Main.getInstance().pushUserMap(this);
+                }
                 break;
             case message.TestC2S["name"]:
                 if (this.testLogic) {
@@ -55,28 +64,6 @@ export class UserMainLogic implements IHandlerMessage {
     public handlerClose(code: number, desc: string) {
         console.log("socket closed: code:" + code + "desc: " + desc);
     }
-
-    public handlerLogin(msg: message.LoginC2S) {
-        let userData: UserData = new UserData();
-        userData.id = v1();
-        userData.nickname = msg.username;
-        userData.password = msg.password;
-        userData.createTime = new Date().getTime().toString();
-        this._uid = userData.id;
-        for (let baseLogic of this.baseLogicArr) {
-            baseLogic.setUserData(userData);
-        }
-        Main.getInstance().pushUserMap(this);
-
-        // 存库
-        UserDataTab.getInstance().insert(userData);
-
-        let resData: message.LoginS2C = new message.LoginS2C();
-        resData.code = 1;
-        // 返回
-        this.sendMsg(resData);
-    }
-
     public sendMsg(msg: any) {
         let sendBuf: Buffer = MessageInit.getInstance().write(msg);
         if (this._connection) {
