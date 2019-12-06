@@ -1,14 +1,14 @@
 import { message } from "../../../protocol/message/message";
 import { UserData } from "../../../common/mysql/tables/user";
-import { MainLogic } from "../main/mainLogic";
+import { UserMainLogic } from "../userMainLogic";
 import { LogicBase } from "../logicBase";
 
 export class TestLogic extends LogicBase {
 
     public aa: number = 0;
 
-    constructor(mainLogic: MainLogic) {
-        super(mainLogic);
+    constructor(userMainLogic: UserMainLogic) {
+        super(userMainLogic);
     }
 
     handlerLogin(msg: message.TestC2S) {

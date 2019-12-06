@@ -1,4 +1,4 @@
-import { MainLogic } from "./main/mainLogic";
+import { UserMainLogic } from "./userMainLogic";
 import { connection, IMessage } from "websocket";
 import { UserData } from "../../common/mysql/tables/user";
 import { MessageInit } from "../../protocol/message/messageInit";
@@ -7,9 +7,9 @@ export class LogicBase {
     public _userData!: UserData;
 
     public _conn!: connection;
-    constructor(mainLogic: MainLogic) {
-        this.setConn(mainLogic._connection);
-        mainLogic.pushLogicBase(this);
+    constructor(userMainLogic: UserMainLogic) {
+        this.setConn(userMainLogic._connection);
+        userMainLogic.pushLogicBase(this);
     }
 
     public setConn(conn?: connection): void {

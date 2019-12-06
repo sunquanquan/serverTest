@@ -1,16 +1,16 @@
-import { IHandlerMessage } from "../../../common/socket/IHandlerMessage";
+import { IHandlerMessage } from "../../common/socket/IHandlerMessage";
 import { IMessage, connection } from "websocket";
-import { Channel } from "../../../common/socket/channel";
-import { TestLogic } from "../test.ts/testLogic";
-import { LogicBase } from "../logicBase";
-import { UserData, UserDataTab } from "../../../common/mysql/tables/user";
+import { Channel } from "../../common/socket/channel";
+import { TestLogic } from "./test.ts/testLogic";
+import { LogicBase } from "./logicBase";
+import { UserData, UserDataTab } from "../../common/mysql/tables/user";
 import { v1 } from 'uuid';
-import { MessageInit } from "../../../protocol/message/messageInit";
-import { message } from "../../../protocol/message/message";
+import { MessageInit } from "../../protocol/message/messageInit";
+import { message } from "../../protocol/message/message";
 
-export class MainLogic implements IHandlerMessage {
+export class UserMainLogic implements IHandlerMessage {
     public logicBaseArr: LogicBase[] = [];
-    public testLogic!: TestLogic;
+    private testLogic!: TestLogic;
 
     public _connection?: connection;
     protected _channel?: Channel;

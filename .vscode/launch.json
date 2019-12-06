@@ -9,8 +9,8 @@
             "type": "node",
             "request": "launch",
             "name": "server",
-            "program": "${workspaceFolder}/serverJS/server.js",
-            "preLaunchTask": "tsc: watch - tsconfig.json",      //VSCode 编译改变的文件
+            "program": "${workspaceFolder}/buildJS/gameServer/gameSvr.js",
+            // "preLaunchTask": "tsc: watch - tsconfig.json",      //VSCode 编译改变的文件
             "outFiles": [
                 "${workspaceFolder}/**/*.js"
             ]

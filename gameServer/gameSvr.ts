@@ -2,7 +2,7 @@ import { Channel } from '../common/socket/channel';
 import { MysqlClass } from '../common/mysql/mysql';
 import { TableLoad } from '../common/parseTables/tableLoad';
 import { MysqlLoad } from '../common/mysql/mysqLoad';
-import { MainLogic } from './handler/main/mainLogic';
+import { UserMainLogic } from './handler/userMainLogic';
 import { SocketSvr } from '../common/socket/socketSrv';
 import { MessageInit } from '../protocol/message/messageInit';
 
@@ -27,7 +27,7 @@ class GameSvr {
         // server init
         let socketSrv = new SocketSvr();
         socketSrv.initSvr((channel: Channel) => {
-            let mainLogic: MainLogic = new MainLogic();
+            let mainLogic: UserMainLogic = new UserMainLogic();
             mainLogic.setChannel(channel);
         });
     }
